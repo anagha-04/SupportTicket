@@ -14,11 +14,11 @@ from django.shortcuts import get_object_or_404
 
 class userregisterView(APIView):
 
-    permission_classes =[AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self,request):
 
-        user_serializer = Userregisterationserializer(data= request.data)
+        user_serializer = Userregisterationserializer(data = request.data)
 
         if user_serializer.is_valid():
 
@@ -28,37 +28,43 @@ class userregisterView(APIView):
         
         return Response(user_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-
 class UserLoginView(APIView):
 
-    permission_classes =[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    authentication_classes = [BasicAuthentication]
+    authentication_classes= [BasicAuthentication]
 
     def post(self,request):
 
         user = request.user
 
-        token,create =Token.objects.get_or_create(user=user)
+        token,create =Token.objects.get_or_create(user = request.user)
 
-        return Response({"message":"login success","token":token.key},status=status.HTTP_200_OK)
+        return Response({"message":"login sucess","token": token.key},status=status.HTTP_200_OK)
     
-
 class SupportTicketAddListView(APIView):
-
-    authentication_classes = [TokenAuthentication]
 
     permission_classes =[IsAuthenticated]
 
+    authentication_classes = [TokenAuthentication]
+
     def post(self,request):
 
-        serializer = SupportTicketSerializer(data = request.data)
+        serializer = Userregisterationserializer(data = request.data)
 
         if serializer.is_valid():
 
-            serializer.save(user= request.user)
+            serializer.save(user = request.user)
 
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-   
+    
+    def get(self,request):
+
+        data = SupportTicketModel.objects.filter(user = request.user)
+
+        serializer = SupportTicketSerializer(data,many =True)
+
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
