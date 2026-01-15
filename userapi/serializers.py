@@ -20,5 +20,12 @@ class Userregisterationserializer(serializers.ModelSerializer):
         return user
    
 
+class SupportTicketSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = SupportTicketModel
+
+        exclude =('user',)
 
 
