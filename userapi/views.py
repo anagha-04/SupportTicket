@@ -44,4 +44,21 @@ class UserLoginView(APIView):
         return Response({"message":"login success","token":token.key},status=status.HTTP_200_OK)
     
 
+class SupportTicketAddListView(APIView):
+
+    authentication_classes = [TokenAuthentication]
+
+    permission_classes =[IsAuthenticated]
+
+    def post(self,request):
+
+        serializer = SupportTicketSerializer(data = request.data)
+
+        if serializer.is_valid():
+
+            serializer.save(user= request.user)
+
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
    
